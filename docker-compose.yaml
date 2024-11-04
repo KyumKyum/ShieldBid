@@ -1,0 +1,61 @@
+services:
+  kafka-1:
+    container_name: kafka-1
+    image: confluentinc/cp-kafka:7.5.3
+    platform: linux/amd64
+    ports:
+      - "${KAFKA_1_PORT}:9092"
+    volumes:
+      - kafka-volume-1:/var/lib/kafka/data
+    environment:
+      KAFKA_NODE_ID: 1 # Identifier
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT # Secure Protocol Key-Value Map
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://:29092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:${KAFKA_1_PORT} # Docker Internal Port
+      KAFKA_LISTENERS: INTERNAL://:29092,CONTROLLER://:29093,EXTERNAL://0.0.0.0:${KAFKA_1_PORT} # Kafka Binding Port
+      KAFKA_PROCESS_ROLES: 'broker,controller' # Role (KRaft)
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093 # KRafy
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL # Receiving Name
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER # Controller Using Name (KRaft)
+      CLUSTER_ID: ${KAFKA_CLUSTER_ID:-MkU3OEVBNTcwNTJENDM2Qk} # Cluster Identifier (Same Cluster == Same Cluster ID)
+
+  kafka-2:
+    container_name: kafka-2
+    image: confluentinc/cp-kafka:7.5.3
+    platform: linux/amd64
+    ports:
+      - "${KAFKA_2_PORT}:9093"
+    volumes:
+      - kafka-volume-2:/var/lib/kafka/data
+    environment:
+      KAFKA_NODE_ID: 2
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://:29092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:${KAFKA_2_PORT}
+      KAFKA_LISTENERS: INTERNAL://:29092,CONTROLLER://kafka-2:29093,EXTERNAL://0.0.0.0:${KAFKA_2_PORT}
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      CLUSTER_ID: ${KAFKA_CLUSTER_ID:-MkU3OEVBNTcwNTJENDM2Qk}
+
+  kafka-3:
+    container_name: kafka-3
+    image: confluentinc/cp-kafka:7.5.3
+    platform: linux/amd64
+    ports:
+      - "${KAFKA_3_PORT}:9094"
+    volumes:
+      - kafka-volume-3:/var/lib/kafka/data
+    environment:
+      KAFKA_NODE_ID: 3
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://:29092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:${KAFKA_3_PORT}
+      KAFKA_LISTENERS: INTERNAL://:29092,CONTROLLER://kafka-3:29093,EXTERNAL://0.0.0.0:${KAFKA_3_PORT}
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka-1:29093,2@kafka-2:29093,3@kafka-3:29093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      CLUSTER_ID: ${KAFKA_CLUSTER_ID:-MkU3OEVBNTcwNTJENDM2Qk}
+volumes:
+  kafka-volume-1:
+  kafka-volume-2:
+  kafka-volume-3:
