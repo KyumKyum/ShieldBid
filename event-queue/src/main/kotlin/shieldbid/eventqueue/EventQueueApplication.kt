@@ -7,5 +7,6 @@ import org.springframework.boot.runApplication
 class EventQueueApplication
 
 fun main(args: Array<String>) {
+	//* Bootstrap
 	runApplication<EventQueueApplication>(*args)
 }
