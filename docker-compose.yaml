@@ -9,6 +9,13 @@ services:
       RABBITMQ_DEFAULT_PASS: guest
     volumes:
       - "rabbitmq_data:/var/lib/rabbitmq"
+
+  event_queue:
+    build:
+      context: ./event-queue/
+      dockerfile: Dockerfile
+    ports:
+      - "16231:16231"
 volumes:
   rabbitmq_data:
 
