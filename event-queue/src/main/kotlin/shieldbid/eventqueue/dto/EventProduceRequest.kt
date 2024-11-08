@@ -1,8 +1,7 @@
 package shieldbid.eventqueue.dto
 
-import shieldbid.eventqueue.dto.events.Event
-
 class EventProduceRequest (
-    val topic: String,
+    val to: String,
+    val rk: String,
     val event: Any
 )

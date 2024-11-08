@@ -9,15 +9,17 @@ class EventProduceService(
     @Autowired private val rabbit: RabbitTemplate
 ) {
 
-    fun<E> produce(channel: String, event: E): Boolean {
+    fun<E> produce(exchange: String, rk: String, event: E): Boolean {
         try {
             val stringifiedEvent = event.toString()
-            rabbit.convertAndSend(channel, stringifiedEvent)
+            println(exchange)
+            println(rk)
+            rabbit.convertAndSend(exchange, rk, stringifiedEvent)
             return true;
         }catch (e: Exception){
             //* TODO: Error Handle
             println(e.printStackTrace())
-            return false;
+            throw e;
         }
     }
 }

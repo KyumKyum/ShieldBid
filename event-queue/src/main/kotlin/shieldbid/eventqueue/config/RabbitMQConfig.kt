@@ -7,18 +7,28 @@ import org.springframework.amqp.core.TopicExchange
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
+
 @Configuration
 class RabbitMQConfig {
 
     @Bean
-    fun testQueue(): Queue = Queue("testQueue", true)
-
-    //* Add More Queue
+    fun testQueue(): Queue = Queue("queue.test", true)
 
     @Bean
-    fun exchange(): TopicExchange = TopicExchange("TopicExchange")
+    fun processingQueue(): Queue = Queue("queue.processing", true)
 
     @Bean
-    fun binding(queue: Queue, exchange: TopicExchange): Binding =
-        BindingBuilder.bind(queue).to(exchange).with("routing.key.#")
+    fun testExchange(): TopicExchange = TopicExchange("exchange.test")
+
+    @Bean
+    fun processingExchange(): TopicExchange = TopicExchange("exchange.process")
+
+    @Bean
+    fun testQueueBinding(testQueue: Queue): Binding =
+        BindingBuilder.bind(testQueue).to(testExchange()).with("test.*")
+
+    @Bean
+    fun processingQueueBinding(processingQueue: Queue): Binding =
+        BindingBuilder.bind(processingQueue).to(processingExchange()).with("processing.*")
+
 }

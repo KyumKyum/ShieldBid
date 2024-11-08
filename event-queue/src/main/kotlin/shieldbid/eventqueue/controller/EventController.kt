@@ -18,16 +18,13 @@ class EventController(
     @PostMapping("/event")
     fun handleProduceEvent(@RequestBody eventProduceRequest: EventProduceRequest): ResponseEntity<EventResponse> {
         try {
-            val topic = eventProduceRequest.topic
-//        when (val event= eventProduceRequest.event){
-//            is EventEcho -> eventProduceService.produce(topic, event)
-//            else -> {
-//                println(event)
-//                return ResponseEntity.badRequest().body(EventResponse(false, "Unsupported event!"))
-//            }
-//        }
-
-            eventProduceService.produce(topic, eventProduceRequest.event)
+            val rk = eventProduceRequest.rk
+            val exchange = when(eventProduceRequest.to) {
+                "TEST" -> "exchange.test"
+                "PROCESSING" -> "exchange.process"
+                else -> "exchange.test"
+            }
+            eventProduceService.produce(exchange, rk, eventProduceRequest.event)
 
             return ResponseEntity.ok(EventResponse(true, "OK!"))
         }catch (ex : Exception){
