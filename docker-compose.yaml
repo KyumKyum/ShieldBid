@@ -16,12 +16,12 @@ services:
       retries: 3
       start_period: 30s
 
-  #event_queue:
-    #  build:
-      #   context: ./event-queue/
-      #    dockerfile: Dockerfile
-    #  ports:
-      #  - "${EQ_PORT}:16231"
+  event_queue:
+     build:
+        context: ./event-queue/
+         dockerfile: Dockerfile
+     ports:
+       - "${EQ_PORT}:16231"
 
   db:
     image: postgres

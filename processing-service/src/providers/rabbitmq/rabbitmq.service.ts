@@ -20,4 +20,6 @@ export class RabbitMQService {
     public async subHandler(msg: {}) {
         console.log(`Received message: ${JSON.stringify(msg)}`);
     }
+
+    //* Add Subscriber in here
 }
