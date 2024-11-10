@@ -19,7 +19,7 @@ services:
   event_queue:
      build:
         context: ./event-queue/
-         dockerfile: Dockerfile
+        dockerfile: Dockerfile
      ports:
        - "${EQ_PORT}:16231"
 
