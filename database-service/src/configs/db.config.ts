@@ -1,4 +1,7 @@
 import { Options, PostgreSqlDriver } from "@mikro-orm/postgresql";
+import * as dotenv from 'dotenv';
+
+dotenv.config(); // Load environment variables from .env
 
 const dbConfig: Options = {
     entities: ['./dist/entities'],

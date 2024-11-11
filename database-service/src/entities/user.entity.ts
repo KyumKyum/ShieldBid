@@ -1,5 +1,6 @@
-import { Entity, PrimaryKey, Property } from "@mikro-orm/core";
+import { Collection, Entity, OneToMany, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from "uuid";
+import { Product } from "./product.entity";
 
 @Entity()
 export class User {
@@ -9,6 +10,9 @@ export class User {
 
     @Property()
     name!: string;
+
+    @OneToMany(() => Product, product => product.owner)
+    product = new Collection<Product>(this);
 
     @Property({type: 'date'})
     createdAt = new Date();

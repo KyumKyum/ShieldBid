@@ -18,9 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "migration:create": "mikro-orm migration:create --config ./src/configs/db.config.ts",
-    "migration:up": "mikro-orm migration:up --config ./src/configs/db.config.ts",
-    "migration:down": "mikro-orm migration:down --config ./src/configs/db.config.ts"
+    "migration:create": "dotenv -e ./env/.dev.env -- mikro-orm migration:create --config ./src/configs/db.config.ts",
+    "migration:up": "dotenv -e ./env/.dev.env -- mikro-orm migration:up --config ./src/configs/db.config.ts",
+    "migration:down": "cross-env NODE_ENV=dev mikro-orm migration:down --config ./src/configs/db.config.ts"
   },
   "dependencies": {
     "@golevelup/nestjs-rabbitmq": "^5.6.0",
@@ -39,6 +39,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "cross-env": "^7.0.3",
+    "dotenv": "^16.4.5",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "uuid": "^11.0.2"
