@@ -22,6 +22,9 @@ class EventController(
             val exchange = when(eventProduceRequest.to) {
                 "TEST" -> "exchange.test"
                 "PROCESSING" -> "exchange.process"
+                "DATABASE" -> "exchange.database"
+                "AUCTION" -> "exchange.auction"
+                "USER" -> "exchange.user"
                 else -> "exchange.test"
             }
             eventProduceService.produce(exchange, rk, eventProduceRequest.event)
