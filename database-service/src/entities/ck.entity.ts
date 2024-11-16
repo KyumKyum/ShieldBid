@@ -3,17 +3,16 @@ import { v4 } from "uuid";
 import { Bid } from "./bid.entity";
 
 @Entity()
-export class CommitmentKey{
-    @PrimaryKey()
-    id = v4();
+export class CommitmentKey {
+	@PrimaryKey()
+	id = v4();
 
-    @ManyToOne(() => Bid)
-    bid!: Bid;
+	@ManyToOne(() => Bid)
+	bid!: Bid;
 
-    @Property()
-    value!: String;
+	@Property()
+	value!: String;
 
-    @Property()
-    isFirst!: Boolean;
-
+	@Property()
+	isFirst!: Boolean;
 }

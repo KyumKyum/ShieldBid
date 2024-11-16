@@ -1,705 +1,634 @@
 {
-  "namespaces": [
-    "public"
-  ],
-  "name": "public",
-  "tables": [
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "date"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "date"
-        }
-      },
-      "name": "user",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "user_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {},
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "owner_id": {
-          "name": "owner_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "name": {
-          "name": "name",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "type": {
-          "name": "type",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "date"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "date"
-        }
-      },
-      "name": "product",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "product_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "product_owner_id_foreign": {
-          "constraintName": "product_owner_id_foreign",
-          "columnNames": [
-            "owner_id"
-          ],
-          "localTableName": "public.product",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.user",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "product_id": {
-          "name": "product_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "is_terminated": {
-          "name": "is_terminated",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "boolean"
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "date"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "date",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 0,
-          "mappedType": "date"
-        }
-      },
-      "name": "auction",
-      "schema": "public",
-      "indexes": [
-        {
-          "columnNames": [
-            "product_id"
-          ],
-          "composite": false,
-          "keyName": "auction_product_id_unique",
-          "constraint": true,
-          "primary": false,
-          "unique": true
-        },
-        {
-          "keyName": "auction_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "auction_product_id_foreign": {
-          "constraintName": "auction_product_id_foreign",
-          "columnNames": [
-            "product_id"
-          ],
-          "localTableName": "public.auction",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.product",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "auction_id": {
-          "name": "auction_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        }
-      },
-      "name": "scheme",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "scheme_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "scheme_auction_id_foreign": {
-          "constraintName": "scheme_auction_id_foreign",
-          "columnNames": [
-            "auction_id"
-          ],
-          "localTableName": "public.scheme",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.auction",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "scheme_id": {
-          "name": "scheme_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "value": {
-          "name": "value",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "index": {
-          "name": "index",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        }
-      },
-      "name": "proving_key",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "proving_key_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "proving_key_scheme_id_foreign": {
-          "constraintName": "proving_key_scheme_id_foreign",
-          "columnNames": [
-            "scheme_id"
-          ],
-          "localTableName": "public.proving_key",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.scheme",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "scheme_id": {
-          "name": "scheme_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "value": {
-          "name": "value",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "index": {
-          "name": "index",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        }
-      },
-      "name": "proof",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "proof_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "proof_scheme_id_foreign": {
-          "constraintName": "proof_scheme_id_foreign",
-          "columnNames": [
-            "scheme_id"
-          ],
-          "localTableName": "public.proof",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.scheme",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "auction_id": {
-          "name": "auction_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "commitment": {
-          "name": "commitment",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "commitment_key": {
-          "name": "commitment_key",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "bid_price": {
-          "name": "bid_price",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "min_price": {
-          "name": "min_price",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        },
-        "randomness": {
-          "name": "randomness",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        }
-      },
-      "name": "bid",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "bid_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "bid_auction_id_foreign": {
-          "constraintName": "bid_auction_id_foreign",
-          "columnNames": [
-            "auction_id"
-          ],
-          "localTableName": "public.bid",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.auction",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "bid_id": {
-          "name": "bid_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "value": {
-          "name": "value",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "is_first": {
-          "name": "is_first",
-          "type": "boolean",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "boolean"
-        }
-      },
-      "name": "commitment_key",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "commitment_key_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "commitment_key_bid_id_foreign": {
-          "constraintName": "commitment_key_bid_id_foreign",
-          "columnNames": [
-            "bid_id"
-          ],
-          "localTableName": "public.commitment_key",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.bid",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    },
-    {
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "scheme_id": {
-          "name": "scheme_id",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "value": {
-          "name": "value",
-          "type": "varchar(255)",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "length": 255,
-          "mappedType": "string"
-        },
-        "index": {
-          "name": "index",
-          "type": "int",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": false,
-          "mappedType": "integer"
-        }
-      },
-      "name": "verification_key",
-      "schema": "public",
-      "indexes": [
-        {
-          "keyName": "verification_key_pkey",
-          "columnNames": [
-            "id"
-          ],
-          "composite": false,
-          "constraint": true,
-          "primary": true,
-          "unique": true
-        }
-      ],
-      "checks": [],
-      "foreignKeys": {
-        "verification_key_scheme_id_foreign": {
-          "constraintName": "verification_key_scheme_id_foreign",
-          "columnNames": [
-            "scheme_id"
-          ],
-          "localTableName": "public.verification_key",
-          "referencedColumnNames": [
-            "id"
-          ],
-          "referencedTableName": "public.scheme",
-          "updateRule": "cascade"
-        }
-      },
-      "nativeEnums": {}
-    }
-  ],
-  "nativeEnums": {}
+	"namespaces": ["public"],
+	"name": "public",
+	"tables": [
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				}
+			},
+			"name": "user",
+			"schema": "public",
+			"indexes": [
+				{
+					"keyName": "user_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {},
+			"nativeEnums": {}
+		},
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"owner_id": {
+					"name": "owner_id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"name": {
+					"name": "name",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"type": {
+					"name": "type",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				}
+			},
+			"name": "product",
+			"schema": "public",
+			"indexes": [
+				{
+					"keyName": "product_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {
+				"product_owner_id_foreign": {
+					"constraintName": "product_owner_id_foreign",
+					"columnNames": ["owner_id"],
+					"localTableName": "public.product",
+					"referencedColumnNames": ["id"],
+					"referencedTableName": "public.user",
+					"updateRule": "cascade"
+				}
+			},
+			"nativeEnums": {}
+		},
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"title": {
+					"name": "title",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"product_id": {
+					"name": "product_id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"is_terminated": {
+					"name": "is_terminated",
+					"type": "boolean",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"mappedType": "boolean"
+				},
+				"min_price": {
+					"name": "min_price",
+					"type": "int",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"mappedType": "integer"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				}
+			},
+			"name": "auction",
+			"schema": "public",
+			"indexes": [
+				{
+					"columnNames": ["product_id"],
+					"composite": false,
+					"keyName": "auction_product_id_unique",
+					"constraint": true,
+					"primary": false,
+					"unique": true
+				},
+				{
+					"keyName": "auction_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {
+				"auction_product_id_foreign": {
+					"constraintName": "auction_product_id_foreign",
+					"columnNames": ["product_id"],
+					"localTableName": "public.auction",
+					"referencedColumnNames": ["id"],
+					"referencedTableName": "public.product",
+					"updateRule": "cascade"
+				}
+			},
+			"nativeEnums": {}
+		},
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"auction_id": {
+					"name": "auction_id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				}
+			},
+			"name": "scheme",
+			"schema": "public",
+			"indexes": [
+				{
+					"keyName": "scheme_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {
+				"scheme_auction_id_foreign": {
+					"constraintName": "scheme_auction_id_foreign",
+					"columnNames": ["auction_id"],
+					"localTableName": "public.scheme",
+					"referencedColumnNames": ["id"],
+					"referencedTableName": "public.auction",
+					"updateRule": "cascade"
+				}
+			},
+			"nativeEnums": {}
+		},
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"scheme_id": {
+					"name": "scheme_id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"value": {
+					"name": "value",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"index": {
+					"name": "index",
+					"type": "int",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"mappedType": "integer"
+				}
+			},
+			"name": "proof",
+			"schema": "public",
+			"indexes": [
+				{
+					"keyName": "proof_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {
+				"proof_scheme_id_foreign": {
+					"constraintName": "proof_scheme_id_foreign",
+					"columnNames": ["scheme_id"],
+					"localTableName": "public.proof",
+					"referencedColumnNames": ["id"],
+					"referencedTableName": "public.scheme",
+					"updateRule": "cascade"
+				}
+			},
+			"nativeEnums": {}
+		},
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"auction_id": {
+					"name": "auction_id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"commitment": {
+					"name": "commitment",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"commitment_key": {
+					"name": "commitment_key",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"bid_price": {
+					"name": "bid_price",
+					"type": "int",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"mappedType": "integer"
+				},
+				"randomness": {
+					"name": "randomness",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"created_at": {
+					"name": "created_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				},
+				"updated_at": {
+					"name": "updated_at",
+					"type": "date",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 0,
+					"mappedType": "date"
+				}
+			},
+			"name": "bid",
+			"schema": "public",
+			"indexes": [
+				{
+					"keyName": "bid_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {
+				"bid_auction_id_foreign": {
+					"constraintName": "bid_auction_id_foreign",
+					"columnNames": ["auction_id"],
+					"localTableName": "public.bid",
+					"referencedColumnNames": ["id"],
+					"referencedTableName": "public.auction",
+					"updateRule": "cascade"
+				}
+			},
+			"nativeEnums": {}
+		},
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"bid_id": {
+					"name": "bid_id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"value": {
+					"name": "value",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"is_first": {
+					"name": "is_first",
+					"type": "boolean",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"mappedType": "boolean"
+				}
+			},
+			"name": "commitment_key",
+			"schema": "public",
+			"indexes": [
+				{
+					"keyName": "commitment_key_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {
+				"commitment_key_bid_id_foreign": {
+					"constraintName": "commitment_key_bid_id_foreign",
+					"columnNames": ["bid_id"],
+					"localTableName": "public.commitment_key",
+					"referencedColumnNames": ["id"],
+					"referencedTableName": "public.bid",
+					"updateRule": "cascade"
+				}
+			},
+			"nativeEnums": {}
+		},
+		{
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"scheme_id": {
+					"name": "scheme_id",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"value": {
+					"name": "value",
+					"type": "varchar(255)",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"length": 255,
+					"mappedType": "string"
+				},
+				"index": {
+					"name": "index",
+					"type": "int",
+					"unsigned": false,
+					"autoincrement": false,
+					"primary": false,
+					"nullable": false,
+					"mappedType": "integer"
+				}
+			},
+			"name": "verification_key",
+			"schema": "public",
+			"indexes": [
+				{
+					"keyName": "verification_key_pkey",
+					"columnNames": ["id"],
+					"composite": false,
+					"constraint": true,
+					"primary": true,
+					"unique": true
+				}
+			],
+			"checks": [],
+			"foreignKeys": {
+				"verification_key_scheme_id_foreign": {
+					"constraintName": "verification_key_scheme_id_foreign",
+					"columnNames": ["scheme_id"],
+					"localTableName": "public.verification_key",
+					"referencedColumnNames": ["id"],
+					"referencedTableName": "public.scheme",
+					"updateRule": "cascade"
+				}
+			},
+			"nativeEnums": {}
+		}
+	],
+	"nativeEnums": {}
 }

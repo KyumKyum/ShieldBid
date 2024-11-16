@@ -3,19 +3,19 @@ import { RabbitMQService } from "./rabbitmq.service";
 import { RabbitMQModule } from "@golevelup/nestjs-rabbitmq";
 
 @Module({
-    imports: [
-        RabbitMQModule.forRoot(RabbitMQModule, {
-            exchanges: [
-                {
-                    name: `${process.env.RMQ_EXCHANGE}`,
-                    type: 'topic'
-                }
-            ],
-            uri: `amqp://${process.env.RMQ_USER}:${process.env.RMQ_PWD}@${process.env.RMQ_HOST}:${process.env.RMQ_PORT}`,
-            connectionInitOptions: {wait: false}
-        })
-    ],
-    providers: [RabbitMQService]
+	imports: [
+		RabbitMQModule.forRoot(RabbitMQModule, {
+			exchanges: [
+				{
+					name: `${process.env.RMQ_EXCHANGE_AUCTION}`,
+					type: "topic",
+				},
+			],
+			uri: `amqp://${process.env.RMQ_USER}:${process.env.RMQ_PWD}@${process.env.RMQ_HOST}:${process.env.RMQ_PORT}`,
+			connectionInitOptions: { wait: false },
+		}),
+	],
+	providers: [RabbitMQService],
+	exports: [RabbitMQService, RabbitMQModule], // Export both the service and the module
 })
-
-export class AuctionRabbitMQModule {};
+export class AuctionRabbitMQModule {}

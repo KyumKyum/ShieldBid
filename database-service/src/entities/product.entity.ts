@@ -4,22 +4,21 @@ import { User } from "./user.entity";
 
 @Entity()
 export class Product {
+	@PrimaryKey()
+	id = v4();
 
-    @PrimaryKey()
-    id = v4();
+	@ManyToOne({ entity: () => User })
+	owner!: User;
 
-    @ManyToOne({entity: () => User})
-    owner!: User;
+	@Property()
+	name!: String;
 
-    @Property()
-    name!: String;
+	@Property()
+	type!: String;
 
-    @Property()
-    type!: String;
+	@Property({ type: "date" })
+	createdAt = new Date();
 
-    @Property({type: 'date'})
-    createdAt = new Date();
-
-    @Property({ type: 'date', onUpdate: () => new Date() })
-    updatedAt = new Date();
+	@Property({ type: "date", onUpdate: () => new Date() })
+	updatedAt = new Date();
 }

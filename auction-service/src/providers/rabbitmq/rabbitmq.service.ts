@@ -4,22 +4,21 @@ import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
 
 @Injectable()
 export class RabbitMQService {
+	@RabbitSubscribe({
+		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
+		routingKey: "auction.product.create.resp",
+		queue: `${process.env.RMQ_QUEUE}`,
+		// Acknowledge messages manually
+		errorHandler: (channel, msg, error) => {
+			console.error("Error processing message: ", JSON.stringify(msg));
+			console.error(error);
+			// Negative acknowledgment with requeueing in case of error
+			channel.nack(msg, false, true);
+		},
+	})
+	public async subHandler(cacheKey: string) {
+		console.log(`Received message: ${cacheKey}`);
+	}
 
-    @RabbitSubscribe({
-        exchange: `${process.env.RMQ_EXCHANGE}`,
-        routingKey: "auction.test",
-        queue: `${process.env.RMQ_QUEUE}`,
-         // Acknowledge messages manually
-        errorHandler: (channel, msg, error) => {
-            console.error('Error processing message: ', JSON.stringify(msg));
-            console.error(error);
-            // Negative acknowledgment with requeueing in case of error
-            channel.nack(msg, false, true);
-        }
-    })
-    public async subHandler(msg: {}) {
-        console.log(`Received message: ${JSON.stringify(msg)}`);
-    }
-
-    //* Add Subscriber in here
+	//* Add Subscriber in here
 }

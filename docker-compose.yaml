@@ -41,6 +41,20 @@ services:
       retries: 5
       start_period: 30s
 
+  redis:
+    image: redis:7.4.1
+    ports:
+      - "${REDIS_PORT}:6379"
+    volumes:
+      - "redis_data:/usr/local/etc/redis"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
 volumes:
   rabbitmq_data:
   postgres_data:
+  redis_data:
