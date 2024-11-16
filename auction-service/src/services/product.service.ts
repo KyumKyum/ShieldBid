@@ -1,5 +1,6 @@
 import { AmqpConnection } from "@golevelup/nestjs-rabbitmq";
 import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { DatabaseRk } from "src/constants/databaseRk.constants";
 
 @Injectable()
 export class ProductService {
@@ -21,7 +22,7 @@ export class ProductService {
 		if (
 			!(await this.amqp.publish(
 				process.env.RMQ_EXCHANGE_DB,
-				"database.product.create",
+				DatabaseRk.PRODUCT_CREATE,
 				JSON.stringify(createProductEvent),
 			))
 		) {

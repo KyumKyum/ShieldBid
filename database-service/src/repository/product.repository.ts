@@ -5,23 +5,21 @@ import { DatabaseException } from "src/exceptions/DatabaseException.dto";
 
 @Injectable()
 export class ProductRepository {
-	constructor(private readonly em: EntityManager) {}
+	constructor(private readonly _em: EntityManager) {}
 
 	async create(ownerId: string, name: string, type: string): Promise<Product> {
 		try {
-			const emFork = this.em.fork();
+			const em = this._em.fork();
 
-			const ownerRef = emFork.getReference("User", ownerId);
-			console.log(JSON.stringify(ownerRef));
-			const newProduct = emFork.create(Product, {
+			const ownerRef = em.getReference("User", ownerId);
+
+			const newProduct = em.create(Product, {
 				owner: ownerRef,
 				name,
 				type,
 			});
 
-			console.log(JSON.stringify(newProduct));
-
-			await emFork.persistAndFlush(newProduct);
+			await em.persistAndFlush(newProduct);
 
 			return newProduct;
 		} catch (e) {

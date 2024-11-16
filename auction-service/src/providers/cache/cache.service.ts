@@ -6,7 +6,7 @@ import type Redis from "ioredis";
 export class CacheService {
 	constructor(@InjectRedis() private readonly redis: Redis) {}
 
-	async get<T>(key: string): Promise<T> | null {
+	async get<T>(key: string): Promise<T | null> {
 		const retrived = await this.redis.get(key);
 
 		if (retrived.length <= 0) return null;
@@ -23,5 +23,20 @@ export class CacheService {
 		} catch {
 			return false;
 		}
+	}
+
+	async del(key: string): Promise<boolean> {
+		try {
+			await this.redis.del(key);
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	async flush<T>(key: string): Promise<T | null> {
+		const retrived: T | null = await this.get<T>(key);
+		if (retrived !== null) await this.del(key);
+		return retrived;
 	}
 }

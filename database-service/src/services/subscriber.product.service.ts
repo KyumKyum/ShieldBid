@@ -9,14 +9,13 @@ export class SubscriberProductService {
 		ownerId: string,
 		name: string,
 		type: string,
-	): Promise<boolean> {
+	): Promise<string | null> {
 		try {
-			console.log(ownerId);
-			await this.productRepository.create(ownerId, name, type);
-			return true;
+			const product = await this.productRepository.create(ownerId, name, type);
+			return product.id;
 		} catch {
 			//* DB Creation Error
-			return false;
+			return null;
 		}
 	}
 }
