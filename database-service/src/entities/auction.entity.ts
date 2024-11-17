@@ -16,13 +16,10 @@ export class Auction {
 	id = v4();
 
 	@Property()
-	title: String;
+	title: string;
 
 	@OneToOne()
 	product!: Product;
-
-	@Property()
-	isTerminated!: Boolean;
 
 	@OneToMany(
 		() => Scheme,
@@ -31,7 +28,10 @@ export class Auction {
 	scheme = new Collection<Scheme>(this);
 
 	@Property()
-	minPrice!: Number;
+	minPrice!: number;
+
+	@Property({ default: "PENDING" })
+	status: "PENDING" | "START" | "TERMINATED";
 
 	@Property({ type: "date" })
 	createdAt = new Date();

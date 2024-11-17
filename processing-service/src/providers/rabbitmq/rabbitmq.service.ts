@@ -1,13 +1,14 @@
 import { RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
 import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
+import { ProcessingRk } from "src/constants/processingRk.constants";
 
 @Injectable()
 export class RabbitMQService {
 
     @RabbitSubscribe({
         exchange: `${process.env.RMQ_EXCHANGE}`,
-        routingKey: "processing.test",
+        routingKey: ProcessingRk.AUCTION_CONTRACT_REQUEST,
         queue: `${process.env.RMQ_QUEUE}`,
          // Acknowledge messages manually
         errorHandler: (channel, msg, error) => {
@@ -17,8 +18,8 @@ export class RabbitMQService {
             channel.nack(msg, false, true);
         }
     })
-    public async subHandler(msg: {}) {
-        console.log(`Received message: ${JSON.stringify(msg)}`);
+    public async auctionContractRequestHandler(auctionId: string) {
+        console.log(`Received message: ${auctionId}`);
     }
 
     //* Add Subscriber in here

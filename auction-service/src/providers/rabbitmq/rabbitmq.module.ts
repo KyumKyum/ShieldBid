@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
-import { RabbitMQService } from "./rabbitmq.service";
 import { RabbitMQModule } from "@golevelup/nestjs-rabbitmq";
+import { RabbitAuctionMQService } from "./rabbitmq.auction.service";
 
 @Module({
 	imports: [
@@ -15,7 +15,7 @@ import { RabbitMQModule } from "@golevelup/nestjs-rabbitmq";
 			connectionInitOptions: { wait: false },
 		}),
 	],
-	providers: [RabbitMQService],
-	exports: [RabbitMQService, RabbitMQModule], // Export both the service and the module
+	providers: [RabbitAuctionMQService],
+	exports: [RabbitAuctionMQService, RabbitMQModule], // Export both the service and the module
 })
 export class AuctionRabbitMQModule {}

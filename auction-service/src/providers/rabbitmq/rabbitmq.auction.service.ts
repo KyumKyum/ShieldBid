@@ -1,16 +1,16 @@
 import { AmqpConnection, RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Inject, Injectable } from "@nestjs/common";
-import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
 import { AuctionRk } from "src/constants/auctionRk.constants";
 import { CacheService } from "../cache/cache.service";
-import type { CacheAuction } from "src/dto/auction.dto";
-import type { CreateProductResponse } from "src/dto/product.dto";
+import { CacheAuction } from "src/dto/auction.dto";
+import { CreateProductResponse } from "src/dto/product.dto";
 import { DatabaseRk } from "src/constants/databaseRk.constants";
+import { ProcessingRk } from "src/constants/processingRk.constants";
 
 @Injectable()
-export class RabbitMQService {
+export class RabbitAuctionMQService {
 	constructor(
-		@Inject(CacheService) private readonly cacheService: CacheService,
+		private readonly cacheService: CacheService,
 		private readonly amqp: AmqpConnection,
 	) {}
 
@@ -38,8 +38,6 @@ export class RabbitMQService {
 			...cachedAuction,
 		};
 
-		console.log(JSON.stringify(createAuction));
-
 		await this.amqp.publish(
 			process.env.RMQ_EXCHANGE_DB,
 			DatabaseRk.AUCTION_CREATE,
@@ -53,6 +51,20 @@ export class RabbitMQService {
 		queue: `${process.env.RMQ_QUEUE}`,
 	})
 	public async productAuctionResponseHandler(auctionId: string) {
-		console.log(auctionId); //* TODO: proceed to add contract.
+		//* Send processing server to create contract.
+		await this.amqp.publish(
+			process.env.RMQ_EXCHANGE_PROCESSING,
+			ProcessingRk.AUCTION_CONTRACT_REQUEST,
+			auctionId,
+		);
+	}
+
+	@RabbitSubscribe({
+		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
+		routingKey: AuctionRk.AUCTION_TERMINATE_RESPONSE,
+		queue: `${process.env.RMQ_QUEUE}`,
+	})
+	public async auctionTerminationResponseHandler(auctionId: string) {
+		console.log(`TERMINATED: ${auctionId}`); //* TODO: proceed to add contract.
 	}
 }

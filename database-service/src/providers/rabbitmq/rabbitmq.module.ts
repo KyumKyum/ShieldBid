@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
-import { DatabaseMQService } from "./rabbitmq.service";
+import { DatabaseProductMQService } from "./rabbitmq.product.service";
 import { RabbitMQModule } from "@golevelup/nestjs-rabbitmq";
 import { SubscriberModule } from "src/modules/subscriber.module";
+import { DatabaseAuctionMQService } from "./rabbitmq.auction.service";
 
 @Module({
 	imports: [
@@ -17,6 +18,6 @@ import { SubscriberModule } from "src/modules/subscriber.module";
 		}),
 		SubscriberModule,
 	],
-	providers: [DatabaseMQService],
+	providers: [DatabaseProductMQService, DatabaseAuctionMQService],
 })
 export class DatabaseRabbitMQModule {}

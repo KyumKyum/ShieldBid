@@ -1,13 +1,10 @@
 import { Module } from "@nestjs/common";
-import { AuctionController } from "src/controllers/auction.controller";
-import { ProductModule } from "./product.module";
-import { ProductService } from "src/services/product.service";
-import { CacheModule } from "src/providers/cache/cache.module";
-import { CacheService } from "src/providers/cache/cache.service";
+import { AuctionRabbitMQModule } from "src/providers/rabbitmq/rabbitmq.module";
+import { AuctionService } from "src/services/auction.service";
 
 @Module({
-	imports: [ProductModule],
-	controllers: [AuctionController],
-	providers: [],
+	imports: [AuctionRabbitMQModule],
+	providers: [AuctionService],
+	exports: [AuctionService],
 })
 export class AuctionModule {}

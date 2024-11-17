@@ -1,10 +1,10 @@
 import { AmqpConnection } from "@golevelup/nestjs-rabbitmq";
-import { HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { DatabaseRk } from "src/constants/databaseRk.constants";
 
 @Injectable()
 export class ProductService {
-	constructor(@Inject(AmqpConnection) private readonly amqp: AmqpConnection) {}
+	constructor(private readonly amqp: AmqpConnection) {}
 
 	async publishCreateProductEvent(
 		cacheKey: string,

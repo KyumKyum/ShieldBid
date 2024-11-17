@@ -11,3 +11,7 @@ export type CacheAuction = Pick<
 	CreateAuctionRequest,
 	"auctionTitle" | "minimalPrice"
 >;
+
+export type FinishAuctionRequest = {
+	auctionId: string;
+};

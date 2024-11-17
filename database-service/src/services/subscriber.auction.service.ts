@@ -22,4 +22,13 @@ export class SubscriberAuctionService {
 			return null;
 		}
 	}
+
+	async terminateAuction(auctionId: string): Promise<boolean> {
+		try {
+			await this.auctionRepository.update(auctionId, { status: "TERMINATED" });
+			return true;
+		} catch {
+			return false;
+		}
+	}
 }

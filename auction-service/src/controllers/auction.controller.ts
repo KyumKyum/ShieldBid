@@ -1,14 +1,20 @@
-import { Body, Controller, Inject, Put } from "@nestjs/common";
-import type { CacheAuction, CreateAuctionRequest } from "src/dto/auction.dto";
+import { Body, Controller, Inject, Post, Put } from "@nestjs/common";
+import {
+	CacheAuction,
+	CreateAuctionRequest,
+	FinishAuctionRequest,
+} from "src/dto/auction.dto";
 import { CacheService } from "src/providers/cache/cache.service";
+import { AuctionService } from "src/services/auction.service";
 import { ProductService } from "src/services/product.service";
 import { v4 } from "uuid";
 
 @Controller("auction")
-export class AuctionController {
+export class RootController {
 	constructor(
-		@Inject(ProductService) private readonly productService: ProductService,
-		@Inject(CacheService) private readonly cacheService: CacheService,
+		private readonly productService: ProductService,
+		private readonly cacheService: CacheService,
+		private readonly auctionService: AuctionService,
 	) {}
 
 	@Put()
@@ -34,5 +40,12 @@ export class AuctionController {
 		);
 
 		return; //Test
+	}
+
+	//* Finish auction
+	@Post("finish")
+	async finishAuction(@Body() finishAuctionReq: FinishAuctionRequest) {
+		const { auctionId } = finishAuctionReq;
+		await this.auctionService.requestAuctionTermination(auctionId);
 	}
 }

@@ -19,14 +19,24 @@ export class AuctionRepository {
 
 			const newAuction = em.create(Auction, {
 				product: productRef,
-				isTerminated: false,
-				minPrice: minimalPrice,
+				minPrice: Number(minimalPrice),
 				title: auctionTitle,
 			});
 
 			await em.persistAndFlush(newAuction);
 
 			return newAuction;
+		} catch (e) {
+			throw new DatabaseException(JSON.stringify(e));
+		}
+	}
+
+	async update(auctionId: string, data: Partial<Auction>): Promise<void> {
+		try {
+			const em = this._em.fork();
+
+			await em.nativeUpdate(Auction, { id: auctionId }, data);
+			return;
 		} catch (e) {
 			throw new DatabaseException(JSON.stringify(e));
 		}
