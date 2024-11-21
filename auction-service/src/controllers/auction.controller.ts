@@ -26,6 +26,7 @@ export class RootController {
 			auctionTitle:
 				auctionTitle?.length > 0 ? auctionTitle : `Auction: ${productName}`,
 			minimalPrice,
+			ownerId,
 		};
 
 		const cacheAuctionKey = `CACHEAUCTION_${v4()}`;

@@ -11,10 +11,13 @@ export class Product {
 	owner!: User;
 
 	@Property()
-	name!: String;
+	name!: string;
 
 	@Property()
-	type!: String;
+	type!: string;
+
+	@Property({ nullable: true })
+	description?: string;
 
 	@Property({ type: "date" })
 	createdAt = new Date();

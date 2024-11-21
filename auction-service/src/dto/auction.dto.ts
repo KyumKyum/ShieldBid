@@ -7,9 +7,14 @@ export type CreateAuctionRequest = {
 	minimalPrice: string;
 };
 
+export type CreateAuctionResponse = {
+	auctionId: string;
+	ownerId: string;
+};
+
 export type CacheAuction = Pick<
 	CreateAuctionRequest,
-	"auctionTitle" | "minimalPrice"
+	"auctionTitle" | "minimalPrice" | "ownerId"
 >;
 
 export type FinishAuctionRequest = {

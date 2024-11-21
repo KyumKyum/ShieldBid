@@ -2,7 +2,7 @@ import { AmqpConnection, RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Inject, Injectable } from "@nestjs/common";
 import { AuctionRk } from "src/constants/auctionRk.constants";
 import { CacheService } from "../cache/cache.service";
-import { CacheAuction } from "src/dto/auction.dto";
+import { CacheAuction, CreateAuctionResponse } from "src/dto/auction.dto";
 import { CreateProductResponse } from "src/dto/product.dto";
 import { DatabaseRk } from "src/constants/databaseRk.constants";
 import { ProcessingRk } from "src/constants/processingRk.constants";
@@ -50,12 +50,13 @@ export class RabbitAuctionMQService {
 		routingKey: AuctionRk.AUCTION_CREATE_RESPONSE,
 		queue: `${process.env.RMQ_QUEUE}`,
 	})
-	public async productAuctionResponseHandler(auctionId: string) {
+	public async productAuctionResponseHandler(createAuctionResponse: string) {
 		//* Send processing server to create contract.
+		console.log(createAuctionResponse);
 		await this.amqp.publish(
 			process.env.RMQ_EXCHANGE_PROCESSING,
 			ProcessingRk.AUCTION_CONTRACT_REQUEST,
-			auctionId,
+			createAuctionResponse,
 		);
 	}
 

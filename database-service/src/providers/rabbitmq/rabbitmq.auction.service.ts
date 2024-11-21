@@ -27,8 +27,12 @@ export class DatabaseAuctionMQService {
 		},
 	})
 	public async createAuctionHandler(msg: string) {
-		const { productId, auctionTitle, minimalPrice }: CreateAuctionEvent =
-			JSON.parse(msg);
+		const {
+			productId,
+			auctionTitle,
+			minimalPrice,
+			ownerId,
+		}: CreateAuctionEvent = JSON.parse(msg);
 
 		const auctionId = await this.subscriberAuctionService.createNewAuction(
 			productId,
@@ -36,11 +40,16 @@ export class DatabaseAuctionMQService {
 			minimalPrice,
 		);
 
+		const resp = {
+			auctionId,
+			ownerId,
+		};
+
 		if (auctionId) {
 			this.amqp.publish(
 				process.env.RMQ_EXCHANGE_AUCTION,
 				AuctionRk.AUCTION_CREATE_RESPONSE,
-				auctionId,
+				JSON.stringify(resp),
 			);
 		} else {
 			this.amqp.publish(
