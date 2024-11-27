@@ -16,6 +16,9 @@ export class User {
 	@Property()
 	name!: string;
 
+	@Property({ default: false })
+	isConsignor: boolean;
+
 	@OneToMany(
 		() => Product,
 		(product) => product.owner,
