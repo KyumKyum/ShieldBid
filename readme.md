@@ -46,3 +46,40 @@
     - Make sure you have `.env.dev` in directory `/env` with required fields.
     - Move to service you want to run locally.
     - Run `yarn build:dev` to run the application.
+
+---
+### API
+
+#### Auction Service (localhost:9424)
+
+- `PUT /auction`: Create and auction.
+```typescript
+// TODO: This request body need to be updated.
+// PUT /auction
+{
+	// UserId that owns the product
+	ownerId: string;
+	productName: string;
+	productType: string;
+	auctionTitle?: string;
+	minimalPrice: string;
+};
+```
+
+- `POST /auction/finish`: Finish the auction
+```typescript
+// POST /auction/finish
+{
+	auctionId: string;
+};
+```
+
+- `POST /bid`: Offer a bid
+```typescript
+// POST /bid
+export type RequestBidDto = {
+	auctionId: string;
+	price: number;
+};
+
+```
