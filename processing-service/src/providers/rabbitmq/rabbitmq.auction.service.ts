@@ -1,6 +1,8 @@
 import { RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
 import { ProcessingRk } from "src/constants/processingRk.constants";
+import * as childProcess from 'node:child_process';
+import * as path from 'node:path/posix';
 import { AuctionContractRequest } from "src/dto/auction.dto";
 
 @Injectable()
@@ -17,8 +19,24 @@ export class RabbitAuctionMQService {
 			channel.nack(msg, false, true);
 		},
 	})
+	
 	public async auctionContractRequestHandler(auctionContractReq: string) {
-		console.log(`Received message: ${auctionContractReq}`);
+		const {auctionId, ownerId} = JSON.parse(auctionContractReq) as AuctionContractRequest;
+		const scriptPath = path.resolve(process.cwd(), 'src/scripts/deploy_auction.sh');
+		childProcess.exec(`export CONTRACT_DIR=${process.env.CONTRACT_DIR}`)
+
+		const child = childProcess.spawn(`sh ${scriptPath}`, [auctionId, ownerId], {
+			stdio: 'inherit', // Inherit stdio so output/error logs are shown in the parent process
+			shell: true, // Enable shell to ensure the script runs correctly
+		  });
+		  
+		  child.on('close', (code) => {
+			console.log(`Script exited with code ${code}`);
+		  });
+		  
+		  child.on('error', (err) => {
+			console.error(`Failed to start script: ${err.message}`);
+		  });
 	}
 
 	//* Add Subscriber in here
