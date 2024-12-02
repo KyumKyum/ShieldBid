@@ -3,9 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { AuctionRk } from "src/constants/auctionRk.constants";
 import { DatabaseRk } from "src/constants/databaseRk.constants";
 import { CreateAuctionEvent } from "src/dto/auctionEvent.dto";
-import { CreateProductEvent } from "src/dto/productEvent.dto";
 import { SubscriberAuctionService } from "src/services/subscriber.auction.service";
-import { SubscriberProductService } from "src/services/subscriber.product.service";
 
 @Injectable()
 export class DatabaseAuctionMQService {
@@ -56,6 +54,27 @@ export class DatabaseAuctionMQService {
 				process.env.RMQ_EXCHANGE_AUCTION,
 				AuctionRk.AUCTION_ERROR,
 				"ERROR: Create Auction",
+			);
+		}
+	}
+
+	@RabbitSubscribe({
+		exchange: `${process.env.RMQ_EXCHANGE_DB}`,
+		routingKey: DatabaseRk.AUCTION_START,
+		queue: `${process.env.RMQ_QUEUE}`,
+	})
+	public async startAuctionHandler(auctionId: string) {
+		if (await this.subscriberAuctionService.startAuction(auctionId)) {
+			this.amqp.publish(
+				process.env.RMQ_EXCHANGE_AUCTION,
+				AuctionRk.AUCTION_START_RESPONSE,
+				auctionId,
+			);
+		} else {
+			this.amqp.publish(
+				process.env.RMQ_EXCHANGE_AUCTION,
+				AuctionRk.AUCTION_ERROR,
+				"ERROR: Terminate Auction",
 			);
 		}
 	}

@@ -62,6 +62,29 @@ export class RabbitAuctionMQService {
 
 	@RabbitSubscribe({
 		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
+		routingKey: AuctionRk.AUCTION_DEPLOYED,
+		queue: `${process.env.RMQ_QUEUE}`
+	})
+	public async auctionDeployedResponseHandler (auctionId: string) {
+		console.log(`Deployed: ${auctionId}`);
+		await this.amqp.publish(
+			process.env.RMQ_EXCHANGE_DATABASE,
+			DatabaseRk.AUCTION_START,
+			auctionId
+		)
+	}
+
+	@RabbitSubscribe({
+		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
+		routingKey: AuctionRk.AUCTION_START_RESPONSE,
+		queue: `${process.env.RMQ_QUEUE}`,
+	})
+	public async AuctionStartResponseHandert(auctionId: string) {
+		console.log(`Auction Started: ${auctionId}`)
+	}
+
+	@RabbitSubscribe({
+		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
 		routingKey: AuctionRk.AUCTION_TERMINATE_RESPONSE,
 		queue: `${process.env.RMQ_QUEUE}`,
 	})

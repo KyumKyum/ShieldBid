@@ -23,6 +23,15 @@ export class SubscriberAuctionService {
 		}
 	}
 
+	async startAuction(auctionId: string): Promise<boolean> {
+		try{
+			await this.auctionRepository.update(auctionId, {status: "START"})
+			return true;
+		}catch{
+			return false;
+		}
+	}
+
 	async terminateAuction(auctionId: string): Promise<boolean> {
 		try {
 			await this.auctionRepository.update(auctionId, { status: "TERMINATED" });

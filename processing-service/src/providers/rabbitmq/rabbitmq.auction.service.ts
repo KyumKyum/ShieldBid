@@ -1,12 +1,18 @@
-import { RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
+import { AmqpConnection, RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
 import { ProcessingRk } from "src/constants/processingRk.constants";
 import * as childProcess from 'node:child_process';
 import * as path from 'node:path/posix';
 import { AuctionContractRequest } from "src/dto/auction.dto";
+import { AuctionRk } from "src/constants/auctionRk.constants";
 
 @Injectable()
 export class RabbitAuctionMQService {
+
+	constructor(
+		private readonly amqp: AmqpConnection,
+	){}
+
 	@RabbitSubscribe({
 		exchange: `${process.env.RMQ_EXCHANGE_PROCESSING}`,
 		routingKey: ProcessingRk.AUCTION_CONTRACT_REQUEST,
@@ -37,6 +43,13 @@ export class RabbitAuctionMQService {
 		  child.on('error', (err) => {
 			console.error(`Failed to start script: ${err.message}`);
 		  });
+
+		//* Deployed
+		await this.amqp.publish(
+			process.env.RMQ_EXCHANGE_AUCTION,
+			AuctionRk.AUCTION_DEPLOYED,
+			auctionId
+		)
 	}
 
 	//* Add Subscriber in here
