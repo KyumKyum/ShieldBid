@@ -37,11 +37,16 @@ export class RabbitMQAuctionService {
 	}
 
 	private async startAuction(auctionId: string) {
+		const msg: CommonMsg = {
+			route: AuctionRoute.START_AUCTION_RESPONSE,
+			payload: auctionId
+		}
+
 		if (await this.auctionService.startAuction(auctionId)) {
 			await this.amqp.publish(
 				process.env.RMQ_EXCHANGE_AUCTION,
 				RoutingKey.AUCTION,
-				auctionId,
+				JSON.stringify(msg),
 			);
 		} else {
 			await this.amqp.publish(
@@ -53,11 +58,16 @@ export class RabbitMQAuctionService {
 	}
 
 	private async terminateAuction(auctionId: string) {
+		const msg: CommonMsg = {
+			route: AuctionRoute.TERMINATE_AUCTION_RESPONSE,
+			payload: auctionId
+		}
+
 		if (await this.auctionService.terminateAuction(auctionId)) {
 			await this.amqp.publish(
 				process.env.RMQ_EXCHANGE_AUCTION,
 				RoutingKey.AUCTION,
-				auctionId,
+				JSON.stringify(msg),
 			);
 		} else {
 			await this.amqp.publish(
@@ -85,13 +95,11 @@ export class RabbitMQAuctionService {
 				break;
 			}
 			case DatabaseRoute.START_AUCTION_REQUEST: {
-				const { auctionId } = JSON.parse(payload) as { auctionId: string };
-				await this.startAuction(auctionId);
+				await this.startAuction(payload);
 				break;
 			}
 			case DatabaseRoute.TERMINATE_AUCTION_REQUEST: {
-				const { auctionId } = JSON.parse(payload) as { auctionId: string };
-				await this.terminateAuction(auctionId);
+				await this.terminateAuction(payload);
 				break;
 			}
 		}

@@ -65,6 +65,7 @@ export class RabbitMQProductService {
 					payload,
 				) as CreateProductEvent;
 				await this.createProduct(event);
+				break;
 			}
 		}
 	}

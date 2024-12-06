@@ -1,6 +1,5 @@
 import { AmqpConnection } from "@golevelup/nestjs-rabbitmq";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { ProcessingRk } from "src/constants/processingRk.constants";
 
 @Injectable()
 export class BidService {
@@ -12,11 +11,11 @@ export class BidService {
 			price,
 		};
 		try {
-			await this.amqp.publish(
-				process.env.RMQ_EXCHANGE_PROCESSING,
-				ProcessingRk.OFFER_BID_REQUEST,
-				JSON.stringify(publishBidData),
-			);
+			// await this.amqp.publish(
+			// 	process.env.RMQ_EXCHANGE_PROCESSING,
+			// 	ProcessingRk.OFFER_BID_REQUEST,
+			// 	JSON.stringify(publishBidData),
+			// );
 		} catch {
 			throw new HttpException(
 				"Event Propagation Failed: Offer Bid",

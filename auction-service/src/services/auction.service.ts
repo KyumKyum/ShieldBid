@@ -1,8 +1,10 @@
 import { AmqpConnection } from "@golevelup/nestjs-rabbitmq";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { DatabaseRk } from "src/constants/databaseRk.constants";
 import { CorrelationService } from "./correlation.service";
 import { TiredOfWaitingError } from "src/exceptions/correlation.exception";
+import { CommonMsg } from "src/dto/commonMsg.dto";
+import { DatabaseRoute } from "src/constants/databaseRoute.constants copy";
+import { RoutingKey } from "src/constants/routingKey.constants";
 
 @Injectable()
 export class AuctionService {
@@ -13,14 +15,14 @@ export class AuctionService {
 
 	async queryAuctionList() {
 		try{
-			const cid = `cid_${this.correlationService.generateId()}`;
-			this.amqp.publish(
-				process.env.RMQ_EXCHANGE_DB,
-				DatabaseRk.AUCTION_QUERY_ALL,
-				cid
-			)
+			// const cid = `cid_${this.correlationService.generateId()}`;
+			// this.amqp.publish(
+			// 	process.env.RMQ_EXCHANGE_DB,
+			// 	DatabaseRk.AUCTION_QUERY_ALL,
+			// 	cid
+			// )
 
-			const res = await this.correlationService.waitAndRetrieve(cid);
+			// const res = await this.correlationService.waitAndRetrieve(cid);
 
 
 		}catch(e) {
@@ -40,11 +42,17 @@ export class AuctionService {
 	}
 
 	async requestAuctionTermination(auctionId: string) {
+		
+		const msg: CommonMsg = {
+			route: DatabaseRoute.TERMINATE_AUCTION_REQUEST,
+			payload: auctionId
+		}
+		
 		try {
 			await this.amqp.publish(
 				process.env.RMQ_EXCHANGE_DB,
-				DatabaseRk.AUCTION_TERMINATE,
-				auctionId,
+				RoutingKey.DATABASE,
+				JSON.stringify(msg),
 			);
 		} catch {
 			throw new HttpException(

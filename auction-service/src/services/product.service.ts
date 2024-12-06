@@ -1,6 +1,8 @@
 import { AmqpConnection } from "@golevelup/nestjs-rabbitmq";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { DatabaseRk } from "src/constants/databaseRk.constants";
+import { DatabaseRoute } from "src/constants/databaseRoute.constants copy";
+import { RoutingKey } from "src/constants/routingKey.constants";
+import { CommonMsg } from "src/dto/commonMsg.dto";
 
 @Injectable()
 export class ProductService {
@@ -19,11 +21,16 @@ export class ProductService {
 			ownerId,
 		};
 
+		const msg: CommonMsg = {
+			route: DatabaseRoute.PRODUCT_CREATE_REQUEST,
+			payload: createProductEvent
+		}
+
 		if (
 			!(await this.amqp.publish(
 				process.env.RMQ_EXCHANGE_DB,
-				DatabaseRk.PRODUCT_CREATE,
-				JSON.stringify(createProductEvent),
+				RoutingKey.DATABASE,
+				JSON.stringify(msg),
 			))
 		) {
 			throw new HttpException(

@@ -37,7 +37,8 @@ export class DatbaaseUserMQService {
 		switch(route) {
 			case DatabaseRoute.LOGIN_WITH_ADDR: {
 				const event: LoginAddrEvent = JSON.parse(payload) as LoginAddrEvent;
-				await this.loginAddr(event)
+				await this.loginAddr(event);
+				break;
 			}
 		}
 	}

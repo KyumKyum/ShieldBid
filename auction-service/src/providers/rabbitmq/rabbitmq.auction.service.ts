@@ -1,93 +1,80 @@
-import { AmqpConnection, RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
-import { Inject, Injectable } from "@nestjs/common";
-import { AuctionRk } from "src/constants/auctionRk.constants";
+import { Injectable } from "@nestjs/common";
 import { CacheService } from "../cache/cache.service";
-import { CacheAuction, CreateAuctionResponse } from "src/dto/auction.dto";
+import { AmqpConnection, RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
+import { RoutingKey } from "src/constants/routingKey.constants";
+import { CommonMsg } from "src/dto/commonMsg.dto";
+import { AuctionRoute } from "src/constants/auctionRoute.constants";
 import { CreateProductResponse } from "src/dto/product.dto";
-import { DatabaseRk } from "src/constants/databaseRk.constants";
-import { ProcessingRk } from "src/constants/processingRk.constants";
+import { CacheAuction } from "src/dto/auction.dto";
+import { ProcessingRoute } from "src/constants/processingRoute.constants";
+import { DatabaseRoute } from "src/constants/databaseRoute.constants copy";
 
 @Injectable()
 export class RabbitAuctionMQService {
-	constructor(
+    constructor(
 		private readonly cacheService: CacheService,
 		private readonly amqp: AmqpConnection,
 	) {}
 
-	//* Product Create Response
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
-		routingKey: AuctionRk.PRODUCT_CREATE_RESPONSE,
-		queue: `${process.env.RMQ_QUEUE}`,
-		// Acknowledge messages manually
-		errorHandler: (channel, msg, error) => {
-			console.error("Error processing message: ", JSON.stringify(msg));
-			console.error(error);
-			// Negative acknowledgment with requeueing in case of error
-			channel.nack(msg, false, true);
-		},
-	})
-	public async productCreateResponseHandler(createProductResponse: string) {
-		const { productId, cacheKey }: CreateProductResponse = JSON.parse(
-			createProductResponse,
-		);
+    private async createProductResponseHandler(event: CreateProductResponse) {
+        const {productId, cacheKey} = event;
 
-		const cachedAuction = await this.cacheService.flush<CacheAuction>(cacheKey);
+        const cachedAuction = await this.cacheService.flush<CacheAuction>(cacheKey);
 		const createAuction = {
 			productId,
 			...cachedAuction,
 		};
 
-		await this.amqp.publish(
+        const msg: CommonMsg = {
+            route: DatabaseRoute.CREATE_AUCTION_REQUEST,
+            payload: createAuction
+        }
+
+        await this.amqp.publish(
 			process.env.RMQ_EXCHANGE_DB,
-			DatabaseRk.AUCTION_CREATE,
-			JSON.stringify(createAuction),
+			RoutingKey.DATABASE,
+			JSON.stringify(msg),
 		);
-	}
+    }
 
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
-		routingKey: AuctionRk.AUCTION_CREATE_RESPONSE,
-		queue: `${process.env.RMQ_QUEUE}`,
-	})
-	public async productAuctionResponseHandler(createAuctionResponse: string) {
-		//* Send processing server to create contract.
-		await this.amqp.publish(
-			process.env.RMQ_EXCHANGE_PROCESSING,
-			ProcessingRk.AUCTION_CONTRACT_REQUEST,
-			createAuctionResponse,
-		);
-	}
-
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
-		routingKey: AuctionRk.AUCTION_DEPLOYED,
+    @RabbitSubscribe({
+        exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
+		routingKey: RoutingKey.AUCTION,
 		queue: `${process.env.RMQ_QUEUE}`
-	})
-	public async auctionDeployedResponseHandler (auctionId: string) {
-		console.log(`Deployed: ${auctionId}`);
-		await this.amqp.publish(
-			process.env.RMQ_EXCHANGE_DATABASE,
-			DatabaseRk.AUCTION_START,
-			auctionId
-		)
-	}
+    })
+    public async dbAuctionResponseHandler(msg: string){
+        const { route, payload } = JSON.parse(msg) as CommonMsg;
 
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
-		routingKey: AuctionRk.AUCTION_START_RESPONSE,
-		queue: `${process.env.RMQ_QUEUE}`,
-	})
-	public async AuctionStartResponseHandert(auctionId: string) {
-		console.log(`Auction Started: ${auctionId}`)
-	}
+        switch(route) {
+            case AuctionRoute.CREATE_PRODUCT_RESPONSE: {
+                const event: CreateProductResponse = JSON.parse(
+                    payload
+                ) as CreateProductResponse;
 
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
-		routingKey: AuctionRk.AUCTION_TERMINATE_RESPONSE,
-		queue: `${process.env.RMQ_QUEUE}`,
-	})
-	public async auctionTerminationResponseHandler(auctionId: string) {
-		console.log(`TERMINATED: ${auctionId}`); //* TODO: proceed to add contract.
-	}
+                await this.createProductResponseHandler(event);
+                break;
+            }
+            case AuctionRoute.CREATE_AUCTION_RESPONSE: {
+                const msg: CommonMsg = {
+                    route: ProcessingRoute.DEPLOY_AUCTION_REQUEST,
+                    payload
+                }
+
+                await this.amqp.publish(
+                    process.env.RMQ_EXCHANGE_PROCESSING,
+                    RoutingKey.PROCESSING,
+                    JSON.stringify(msg)
+                )
+                break;
+            }
+            case AuctionRoute.START_AUCTION_RESPONSE: {
+                console.log(`Auction Started: ${payload}`)
+                break;
+            }
+            case AuctionRoute.TERMINATE_AUCTION_RESPONSE: {
+                console.log(`Auctino Terminated: ${payload}`)
+                break;
+            }
+        }
+    }
 }
