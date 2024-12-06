@@ -1,7 +1,7 @@
 import { Module } from "@nestjs/common";
 import { RabbitAuctionMQService } from "./rabbitmq.auction.service";
 import { RabbitMQModule } from "@golevelup/nestjs-rabbitmq";
-import { RabbitBidMQService } from "./rabbitmq.bid.service";
+// import { RabbitBidMQService } from "./rabbitmq.bid.service";
 
 @Module({
 	imports: [
@@ -16,6 +16,6 @@ import { RabbitBidMQService } from "./rabbitmq.bid.service";
 			connectionInitOptions: { wait: false },
 		}),
 	],
-	providers: [RabbitAuctionMQService, RabbitBidMQService],
+	providers: [RabbitAuctionMQService],
 })
 export class ProcessingRabbitMQModule {}
