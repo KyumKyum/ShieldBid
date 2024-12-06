@@ -4,14 +4,29 @@ import { User } from "src/entities/user.entity";
 
 @Injectable()
 export class UserRepository {
-	constructor(private readonly em: EntityManager) {}
+	constructor(private readonly _em: EntityManager) {}
 
-	async create(name: string): Promise<User> {
+	async create(name: string, addr: string): Promise<User> {
 		const newUser = new User();
 		newUser.name = name;
+		newUser.address = addr;
 
-		await this.em.persistAndFlush(newUser);
+		const em = this._em.fork();
+
+		await em.persistAndFlush(newUser);
 
 		return newUser;
+	}
+
+	async findById(id: string): Promise<User | null> {
+		const em = this._em.fork();
+		const user = await em.findOne(User, { id });
+		return user;
+	}
+
+	async findByAddress(addr: string): Promise<User | null> {
+		const em = this._em.fork();
+		const user = await em.findOne(User, { address: addr });
+		return user;
 	}
 }

@@ -4,3 +4,8 @@ export type CreateAuctionEvent = {
 	minimalPrice: string;
 	ownerId: string;
 };
+
+export type CreateAuctionResponse = {
+	auctionId: string;
+	consignorAddress: string;
+};

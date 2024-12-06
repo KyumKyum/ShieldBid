@@ -52,7 +52,6 @@ export class RabbitAuctionMQService {
 	})
 	public async productAuctionResponseHandler(createAuctionResponse: string) {
 		//* Send processing server to create contract.
-		console.log(createAuctionResponse);
 		await this.amqp.publish(
 			process.env.RMQ_EXCHANGE_PROCESSING,
 			ProcessingRk.AUCTION_CONTRACT_REQUEST,

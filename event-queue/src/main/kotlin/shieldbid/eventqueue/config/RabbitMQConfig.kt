@@ -3,7 +3,7 @@ package shieldbid.eventqueue.config
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
-import org.springframework.amqp.core.TopicExchange
+import org.springframework.amqp.core.DirectExchange
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -25,35 +25,34 @@ class RabbitMQConfig {
     fun userQueue(): Queue = Queue("queue.user", true)
 
 
-    // Exchange
+    // Exchange (changed to DirectExchange)
     @Bean
-    fun processingExchange(): TopicExchange = TopicExchange("exchange.process")
-
-    @Bean
-    fun databaseExchange(): TopicExchange = TopicExchange("exchange.database")
+    fun processingExchange(): DirectExchange = DirectExchange("exchange.process")
 
     @Bean
-    fun auctionExchange(): TopicExchange = TopicExchange("exchange.auction")
+    fun databaseExchange(): DirectExchange = DirectExchange("exchange.database")
 
     @Bean
-    fun userExchange(): TopicExchange = TopicExchange("exchange.user")
-
-
-    // Binding
-    @Bean
-    fun processingQueueBinding(processingQueue: Queue): Binding =
-        BindingBuilder.bind(processingQueue).to(processingExchange()).with("processing.*")
+    fun auctionExchange(): DirectExchange = DirectExchange("exchange.auction")
 
     @Bean
-    fun databaseQueueBinding(databaseQueue: Queue): Binding =
-        BindingBuilder.bind(databaseQueue).to(databaseExchange()).with("database.*")
+    fun userExchange(): DirectExchange = DirectExchange("exchange.user")
+
+
+    // Binding (routing keys are exact matches)
+    @Bean
+    fun processingQueueBinding(processingQueue: Queue, processingExchange: DirectExchange): Binding =
+        BindingBuilder.bind(processingQueue).to(processingExchange).with("processing")
 
     @Bean
-    fun auctionQueueBinding(auctionQueue: Queue): Binding =
-        BindingBuilder.bind(auctionQueue).to(auctionExchange()).with("auction.*")
+    fun databaseQueueBinding(databaseQueue: Queue, databaseExchange: DirectExchange): Binding =
+        BindingBuilder.bind(databaseQueue).to(databaseExchange).with("database")
 
     @Bean
-    fun userQueueBinding(userQueue: Queue): Binding =
-        BindingBuilder.bind(userQueue).to(userExchange()).with("user.*")
+    fun auctionQueueBinding(auctionQueue: Queue, auctionExchange: DirectExchange): Binding =
+        BindingBuilder.bind(auctionQueue).to(auctionExchange).with("auction")
 
+    @Bean
+    fun userQueueBinding(userQueue: Queue, userExchange: DirectExchange): Binding =
+        BindingBuilder.bind(userQueue).to(userExchange).with("user")
 }

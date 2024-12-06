@@ -3,7 +3,7 @@ import { Injectable } from "@nestjs/common";
 import { Ctx, EventPattern, Payload, RmqContext } from "@nestjs/microservices";
 
 @Injectable()
-export class RabbitMQService {
+export class UserRabbitMQService {
 
     @RabbitSubscribe({
         exchange: `${process.env.RMQ_EXCHANGE}`,

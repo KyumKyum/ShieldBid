@@ -1,102 +1,99 @@
 import { AmqpConnection, RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
-import { AuctionRk } from "src/constants/auctionRk.constants";
-import { DatabaseRk } from "src/constants/databaseRk.constants";
+import { AuctionRoute } from "src/constants/auctionRoute.constants";
+import { DatabaseRoute } from "src/constants/databaseRoute.constants";
+import { RoutingKey } from "src/constants/routingKey.constants";
 import { CreateAuctionEvent } from "src/dto/auctionEvent.dto";
+import { CommonMsg } from "src/dto/commonMsg.dto";
 import { SubscriberAuctionService } from "src/services/subscriber.auction.service";
 
 @Injectable()
-export class DatabaseAuctionMQService {
+export class RabbitMQAuctionService {
 	constructor(
-		private readonly subscriberAuctionService: SubscriberAuctionService,
 		private readonly amqp: AmqpConnection,
+		private readonly auctionService: SubscriberAuctionService,
 	) {}
 
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_DB}`,
-		routingKey: DatabaseRk.AUCTION_CREATE,
-		queue: `${process.env.RMQ_QUEUE}`,
-		// Acknowledge messages manually
-		errorHandler: (channel, msg, error) => {
-			console.error("Error processing message: ", JSON.stringify(msg));
-			console.error(error);
-			// Negative acknowledgment with requeueing in case of error
-			channel.nack(msg, false, true);
-		},
-	})
-	public async createAuctionHandler(msg: string) {
-		const {
-			productId,
-			auctionTitle,
-			minimalPrice,
-			ownerId,
-		}: CreateAuctionEvent = JSON.parse(msg);
+	private async createAuctionEvent(event: CreateAuctionEvent) {
+		const resp = await this.auctionService.createNewAuction(event);
 
-		const auctionId = await this.subscriberAuctionService.createNewAuction(
-			productId,
-			auctionTitle,
-			minimalPrice,
-		);
-
-		const resp = {
-			auctionId,
-			ownerId,
-		};
-
-		if (auctionId) {
-			this.amqp.publish(
+		if (resp) {
+			const msg: CommonMsg = {
+				route: AuctionRoute.CREATE_AUCTION_RESPONSE,
+				payload: resp,
+			};
+			await this.amqp.publish(
 				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.AUCTION_CREATE_RESPONSE,
-				JSON.stringify(resp),
+				RoutingKey.AUCTION,
+				JSON.stringify(msg),
 			);
 		} else {
-			this.amqp.publish(
+			await this.amqp.publish(
 				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.AUCTION_ERROR,
-				"ERROR: Create Auction",
+				RoutingKey.AUCTION,
+				"ERROR: Create Auction Event",
+			);
+		}
+	}
+
+	private async startAuction(auctionId: string) {
+		if (await this.auctionService.startAuction(auctionId)) {
+			await this.amqp.publish(
+				process.env.RMQ_EXCHANGE_AUCTION,
+				RoutingKey.AUCTION,
+				auctionId,
+			);
+		} else {
+			await this.amqp.publish(
+				process.env.RMQ_EXCHANGE_AUCTION,
+				RoutingKey.AUCTION,
+				"ERROR: Start Auction Event",
+			);
+		}
+	}
+
+	private async terminateAuction(auctionId: string) {
+		if (await this.auctionService.terminateAuction(auctionId)) {
+			await this.amqp.publish(
+				process.env.RMQ_EXCHANGE_AUCTION,
+				RoutingKey.AUCTION,
+				auctionId,
+			);
+		} else {
+			await this.amqp.publish(
+				process.env.RMQ_EXCHANGE_AUCTION,
+				RoutingKey.AUCTION,
+				"ERROR: Terminate Auction Event",
 			);
 		}
 	}
 
 	@RabbitSubscribe({
 		exchange: `${process.env.RMQ_EXCHANGE_DB}`,
-		routingKey: DatabaseRk.AUCTION_START,
+		routingKey: RoutingKey.DATABASE,
 		queue: `${process.env.RMQ_QUEUE}`,
 	})
-	public async startAuctionHandler(auctionId: string) {
-		if (await this.subscriberAuctionService.startAuction(auctionId)) {
-			this.amqp.publish(
-				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.AUCTION_START_RESPONSE,
-				auctionId,
-			);
-		} else {
-			this.amqp.publish(
-				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.AUCTION_ERROR,
-				"ERROR: Terminate Auction",
-			);
-		}
-	}
+	public async dbAuctionRequestHandler(msg: string): Promise<void> {
+		const { route, payload } = JSON.parse(msg) as CommonMsg;
 
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_DB}`,
-		routingKey: DatabaseRk.AUCTION_TERMINATE,
-		queue: `${process.env.RMQ_QUEUE}`,
-	})
-	public async terminateAuctionHandler(auctionId: string) {
-		if (await this.subscriberAuctionService.terminateAuction(auctionId)) {
-			this.amqp.publish(
-				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.AUCTION_TERMINATE_RESPONSE,
-				auctionId,
-			);
-		} else {
-			this.amqp.publish(
-				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.AUCTION_ERROR,
-				"ERROR: Terminate Auction",
-			);
+		switch (route) {
+			case DatabaseRoute.CREATE_AUCTION_REQUEST: {
+				const event: CreateAuctionEvent = JSON.parse(
+					payload,
+				) as CreateAuctionEvent;
+				await this.createAuctionEvent(event);
+				break;
+			}
+			case DatabaseRoute.START_AUCTION_REQUEST: {
+				const { auctionId } = JSON.parse(payload) as { auctionId: string };
+				await this.startAuction(auctionId);
+				break;
+			}
+			case DatabaseRoute.TERMINATE_AUCTION_REQUEST: {
+				const { auctionId } = JSON.parse(payload) as { auctionId: string };
+				await this.terminateAuction(auctionId);
+				break;
+			}
 		}
 	}
 }

@@ -1,32 +1,22 @@
 import { AmqpConnection, RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
 import { Injectable } from "@nestjs/common";
-import { AuctionRk } from "src/constants/auctionRk.constants";
-import { DatabaseRk } from "src/constants/databaseRk.constants";
+import { AuctionRoute } from "src/constants/auctionRoute.constants";
+import { DatabaseRoute } from "src/constants/databaseRoute.constants";
+import { RoutingKey } from "src/constants/routingKey.constants";
+import { CommonMsg } from "src/dto/commonMsg.dto";
 import { CreateProductEvent } from "src/dto/productEvent.dto";
 import { SubscriberProductService } from "src/services/subscriber.product.service";
 
 @Injectable()
-export class DatabaseProductMQService {
+export class RabbitMQProductService {
 	constructor(
-		private readonly subscriberProductService: SubscriberProductService,
 		private readonly amqp: AmqpConnection,
+		private readonly subscriberProductService: SubscriberProductService,
 	) {}
 
-	@RabbitSubscribe({
-		exchange: `${process.env.RMQ_EXCHANGE_DB}`,
-		routingKey: DatabaseRk.PRODUCT_CREATE,
-		queue: `${process.env.RMQ_QUEUE}`,
-		// Acknowledge messages manually
-		errorHandler: (channel, msg, error) => {
-			console.error("Error processing message: ", JSON.stringify(msg));
-			console.error(error);
-			// Negative acknowledgment with requeueing in case of error
-			channel.nack(msg, false, true);
-		},
-	})
-	public async createProductHandler(msg: string) {
+	private async createProduct(event: CreateProductEvent) {
 		const { cacheKey, ownerId, productName, productType }: CreateProductEvent =
-			JSON.parse(msg);
+			event;
 
 		const productId = await this.subscriberProductService.createNewProduct(
 			ownerId,
@@ -40,19 +30,42 @@ export class DatabaseProductMQService {
 				cacheKey,
 			};
 
+			const msg: CommonMsg = {
+				route: AuctionRoute.CREATE_PRODUCT_RESPONSE,
+				payload: resp,
+			};
+
 			//* Return response event with cache key
 			this.amqp.publish(
 				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.PRODUCT_CREATE_RESPONSE,
-				JSON.stringify(resp),
+				RoutingKey.AUCTION,
+				JSON.stringify(msg),
 			);
 		} else {
 			//* Return response event with Error
 			this.amqp.publish(
 				process.env.RMQ_EXCHANGE_AUCTION,
-				AuctionRk.AUCTION_ERROR,
+				RoutingKey.AUCTION,
 				"ERROR: Create Product",
 			);
+		}
+	}
+
+	@RabbitSubscribe({
+		exchange: `${process.env.RMQ_EXCHANGE_DB}`,
+		routingKey: RoutingKey.DATABASE,
+		queue: `${process.env.RMQ_QUEUE}`,
+	})
+	public async dbProductRequestHandler(msg: string): Promise<void> {
+		const { route, payload } = JSON.parse(msg) as CommonMsg;
+
+		switch (route) {
+			case DatabaseRoute.PRODUCT_CREATE_REQUEST: {
+				const event: CreateProductEvent = JSON.parse(
+					payload,
+				) as CreateProductEvent;
+				await this.createProduct(event);
+			}
 		}
 	}
 }

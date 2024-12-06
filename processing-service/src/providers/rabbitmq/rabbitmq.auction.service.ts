@@ -5,6 +5,7 @@ import * as childProcess from 'node:child_process';
 import * as path from 'node:path/posix';
 import { AuctionContractRequest } from "src/dto/auction.dto";
 import { AuctionRk } from "src/constants/auctionRk.constants";
+import { DatabaseRk } from "src/constants/databaseRk.constants";
 
 @Injectable()
 export class RabbitAuctionMQService {
@@ -27,11 +28,11 @@ export class RabbitAuctionMQService {
 	})
 	
 	public async auctionContractRequestHandler(auctionContractReq: string) {
-		const {auctionId, ownerId} = JSON.parse(auctionContractReq) as AuctionContractRequest;
+		const {auctionId, consignorAddress} = JSON.parse(auctionContractReq) as AuctionContractRequest;
 		const scriptPath = path.resolve(process.cwd(), 'src/scripts/deploy_auction.sh');
 		childProcess.exec(`export CONTRACT_DIR=${process.env.CONTRACT_DIR}`)
 
-		const child = childProcess.spawn(`sh ${scriptPath}`, [auctionId, ownerId], {
+		const child = childProcess.spawn(`sh ${scriptPath}`, [auctionId, consignorAddress], {
 			stdio: 'inherit', // Inherit stdio so output/error logs are shown in the parent process
 			shell: true, // Enable shell to ensure the script runs correctly
 		  });
@@ -46,8 +47,8 @@ export class RabbitAuctionMQService {
 
 		//* Deployed
 		await this.amqp.publish(
-			process.env.RMQ_EXCHANGE_AUCTION,
-			AuctionRk.AUCTION_DEPLOYED,
+			process.env.RMQ_EXCHANGE_DATABASE,
+			DatabaseRk.AUCTION_START,
 			auctionId
 		)
 	}

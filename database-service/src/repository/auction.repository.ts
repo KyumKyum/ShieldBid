@@ -31,6 +31,15 @@ export class AuctionRepository {
 		}
 	}
 
+	async findAll(): Promise<Auction[]> {
+		try {
+			const em = this._em.fork();
+			return await em.findAll(Auction);
+		} catch (e) {
+			throw new DatabaseException(JSON.stringify(e));
+		}
+	}
+
 	async update(auctionId: string, data: Partial<Auction>): Promise<void> {
 		try {
 			const em = this._em.fork();

@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post, Put } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Post, Put } from "@nestjs/common";
 import {
 	CacheAuction,
 	CreateAuctionRequest,
@@ -40,8 +40,12 @@ export class RootController {
 			ownerId,
 		);
 
-		return; //Test
+		return; //Test(
 	}
+
+	//* List auction
+	// @Get("/list")
+	// async getAuctionList():
 
 	//* Finish auction
 	@Post("finish")
