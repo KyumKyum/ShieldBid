@@ -17,12 +17,13 @@ export class HttpExceptionFilter implements ExceptionFilter {
 				? exception.getStatus()
 				: HttpStatus.INTERNAL_SERVER_ERROR;
 
-		resp.status(status).json({
-			ok: false,
-			message: exception.message || "Unknown Error Occurred",
-			status,
-			timestamp: new Date().toISOString(),
-			path: req.url,
-		});
+		console.error(exception.message)
+		// return {
+		// 	ok: false,
+		// 	message: exception.message || "Unknown Error Occurred",
+		// 	status,
+		// 	timestamp: new Date().toISOString(),
+		// 	path: req.url,
+		// };
 	}
 }

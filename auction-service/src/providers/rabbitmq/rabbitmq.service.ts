@@ -8,9 +8,10 @@ import { CreateProductResponse } from "src/dto/product.dto";
 import { CacheAuction } from "src/dto/auction.dto";
 import { ProcessingRoute } from "src/constants/processingRoute.constants";
 import { DatabaseRoute } from "src/constants/databaseRoute.constants copy";
+import { channel } from "diagnostics_channel";
 
 @Injectable()
-export class RabbitAuctionMQService {
+export class RabbitMQService {
     constructor(
 		private readonly cacheService: CacheService,
 		private readonly amqp: AmqpConnection,
@@ -40,16 +41,17 @@ export class RabbitAuctionMQService {
     @RabbitSubscribe({
         exchange: `${process.env.RMQ_EXCHANGE_AUCTION}`,
 		routingKey: RoutingKey.AUCTION,
-		queue: `${process.env.RMQ_QUEUE}`
+		queue: `${process.env.RMQ_QUEUE}`,
+        errorHandler: (channel, msg, error) => {
+            console.log(error)
+        }
     })
-    public async dbAuctionResponseHandler(msg: string){
+    public async handler(msg: string){
         const { route, payload } = JSON.parse(msg) as CommonMsg;
 
         switch(route) {
             case AuctionRoute.CREATE_PRODUCT_RESPONSE: {
-                const event: CreateProductResponse = JSON.parse(
-                    payload
-                ) as CreateProductResponse;
+                const event: CreateProductResponse = payload as CreateProductResponse;
 
                 await this.createProductResponseHandler(event);
                 break;
@@ -59,6 +61,7 @@ export class RabbitAuctionMQService {
                     route: ProcessingRoute.DEPLOY_AUCTION_REQUEST,
                     payload
                 }
+                console.log(msg)
 
                 await this.amqp.publish(
                     process.env.RMQ_EXCHANGE_PROCESSING,

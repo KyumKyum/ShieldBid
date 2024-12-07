@@ -11,6 +11,8 @@ export class UserRepository {
 		newUser.name = name;
 		newUser.address = addr;
 
+		console.log(newUser)
+
 		const em = this._em.fork();
 
 		await em.persistAndFlush(newUser);

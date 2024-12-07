@@ -4,6 +4,7 @@ import { CorrelationService } from "./correlation.service";
 import { CommonMsg } from "src/dto/commonMsg.dto";
 import { DatabaseRoute } from "src/constants/databaseRoute.constants copy";
 import { RoutingKey } from "src/constants/routingKey.constants";
+import { UserDto } from "src/dto/user.dto";
 
 @Injectable()
 export class UserService {
@@ -12,7 +13,7 @@ export class UserService {
         private readonly correlationService: CorrelationService
     ){}
 
-    async loginWithAddress(addr: string){
+    async loginWithAddress(addr: string): Promise<UserDto | null>{
 
 
         const cid = `user_cid_${this.correlationService.generateId()}`
@@ -33,9 +34,9 @@ export class UserService {
 
         //* TODO: Add try-catch
 
-       // const user = await this.correlationService.waitAndRetrieve(cid);
-
-
+       const user = await this.correlationService.waitAndRetrieve(cid);
+       if(!user) return null;
+       return JSON.parse(user) as UserDto
     }
 }
 
