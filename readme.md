@@ -1,4 +1,4 @@
-![shieldbid](https://github.com/user-attachments/assets/80e755a5-cb11-4b93-bb8b-70ca265c9a2e)
+![shieldbid](https://github.com/user-attachments/assets/d728d094-7df0-4119-8a5c-98bc072af620)
 # ShieldBid - DApp Project
 > A Blockchain-based Online Auction Service providing transparency and securacy by using zero-knowledge proof.
 ---
