@@ -9,7 +9,7 @@ export class CacheService {
 	async get<T>(key: string): Promise<T | null> {
 		const retrived = await this.redis.get(key);
 
-		if (retrived.length <= 0) return null;
+		if (retrived?.length <= 0) return null;
 
 		const parsed: T = JSON.parse(retrived);
 		return parsed;

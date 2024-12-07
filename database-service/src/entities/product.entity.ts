@@ -1,11 +1,15 @@
-import { Entity, ManyToOne, PrimaryKey, Property } from "@mikro-orm/core";
+import { Entity, ManyToOne, OneToOne, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from "uuid";
 import { User } from "./user.entity";
+import { Auction } from "./auction.entity";
 
 @Entity()
 export class Product {
 	@PrimaryKey()
 	id = v4();
+
+	@OneToOne(() => Auction, auction => auction.product, {nullable: true})
+ 	auction?: Auction;
 
 	@ManyToOne({ entity: () => User })
 	owner!: User;
@@ -16,7 +20,7 @@ export class Product {
 	@Property()
 	type!: string;
 
-	@Property({ nullable: true })
+	@Property({ nullable: true, default: ""})
 	description?: string;
 
 	@Property({ type: "date" })

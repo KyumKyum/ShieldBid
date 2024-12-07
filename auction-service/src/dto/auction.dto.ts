@@ -1,3 +1,5 @@
+import { ProductDto } from "./product.dto";
+
 export type CreateAuctionRequest = {
 	// UserId that owns the product
 	ownerId: string;
@@ -5,6 +7,7 @@ export type CreateAuctionRequest = {
 	productType: string;
 	auctionTitle?: string;
 	minimalPrice: string;
+	productDescription: string;
 };
 
 export type CreateAuctionResponse = {
@@ -20,3 +23,13 @@ export type CacheAuction = Pick<
 export type FinishAuctionRequest = {
 	auctionId: string;
 };
+
+export type AuctionDto = {
+	id: string,
+	title: string;
+	product: ProductDto,
+	minPrice: number,
+	status: string,
+	createdAt: Date,
+	updatedAt: Date
+}

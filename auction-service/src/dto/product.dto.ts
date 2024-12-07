@@ -3,7 +3,13 @@ export type CreateProductResponse = {
 	cacheKey: string;
 };
 
-// export type ProductDto = {
-// 	id: string,
-// 	owner: 
-// }
+export type ProductDto = {
+	id: string,
+	owner: string //* ID
+	auction: string,
+	name: string,
+	type: string,
+	description: string,
+	createdAt: Date,
+	updatedAt: Date
+}

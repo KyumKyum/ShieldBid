@@ -1,6 +1,7 @@
 import { EntityManager } from "@mikro-orm/postgresql";
 import { Injectable } from "@nestjs/common";
 import { Auction } from "src/entities/auction.entity";
+import { Product } from "src/entities/product.entity";
 import { DatabaseException } from "src/exceptions/DatabaseException.dto";
 
 @Injectable()
@@ -34,7 +35,7 @@ export class AuctionRepository {
 	async findAll(): Promise<Auction[]> {
 		try {
 			const em = this._em.fork();
-			return await em.findAll(Auction);
+			return await em.find(Auction, {}, { populate: ['product'] });
 		} catch (e) {
 			throw new DatabaseException(JSON.stringify(e));
 		}

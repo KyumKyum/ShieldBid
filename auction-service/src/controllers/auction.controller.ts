@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Inject, Post, Put } from "@nestjs/common";
 import {
+	AuctionDto,
 	CacheAuction,
 	CreateAuctionRequest,
 	FinishAuctionRequest,
@@ -19,7 +20,7 @@ export class RootController {
 
 	@Put()
 	async createAuction(@Body() createAuctionReq: CreateAuctionRequest) {
-		const { productName, productType, minimalPrice, ownerId, auctionTitle } =
+		const { productName, productType, minimalPrice, ownerId, auctionTitle, productDescription } =
 			createAuctionReq;
 
 		const cacheAuction: CacheAuction = {
@@ -38,14 +39,18 @@ export class RootController {
 			productName,
 			productType,
 			ownerId,
+			productDescription
 		);
 
 		return; //Test(
 	}
 
-	//* List auction
-	// @Get("/list")
-	// async getAuctionList():
+	// * List auction
+	@Get("/list")
+	async getAuctionList(): Promise<AuctionDto[]> {
+		return await this.auctionService.queryAuctionList();
+		
+	}
 
 	//* Finish auction
 	@Post("finish")

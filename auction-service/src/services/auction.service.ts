@@ -5,6 +5,7 @@ import { TiredOfWaitingError } from "src/exceptions/correlation.exception";
 import { CommonMsg } from "src/dto/commonMsg.dto";
 import { DatabaseRoute } from "src/constants/databaseRoute.constants copy";
 import { RoutingKey } from "src/constants/routingKey.constants";
+import { AuctionDto } from "src/dto/auction.dto";
 
 @Injectable()
 export class AuctionService {
@@ -13,16 +14,23 @@ export class AuctionService {
 		private readonly correlationService: CorrelationService
 	) {}
 
-	async queryAuctionList() {
+	async queryAuctionList(): Promise<AuctionDto[]> {
 		try{
-			// const cid = `cid_${this.correlationService.generateId()}`;
-			// this.amqp.publish(
-			// 	process.env.RMQ_EXCHANGE_DB,
-			// 	DatabaseRk.AUCTION_QUERY_ALL,
-			// 	cid
-			// )
+			const cid = `cid_${this.correlationService.generateId()}`;
 
-			// const res = await this.correlationService.waitAndRetrieve(cid);
+			const msg: CommonMsg = {
+				route: DatabaseRoute.GET_ALL_AUCTIONS,
+				payload: cid
+			}
+
+			await this.amqp.publish(
+				process.env.RMQ_EXCHANGE_DB,
+				RoutingKey.DATABASE,
+				JSON.stringify(msg),
+			)
+
+			const res = await this.correlationService.waitAndRetrieve(cid);
+			return JSON.parse(res) as AuctionDto[]
 
 
 		}catch(e) {

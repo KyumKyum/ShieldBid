@@ -9,9 +9,10 @@ export class SubscriberProductService {
 		ownerId: string,
 		name: string,
 		type: string,
+		productDescription: string
 	): Promise<string | null> {
 		try {
-			const product = await this.productRepository.create(ownerId, name, type);
+			const product = await this.productRepository.create(ownerId, name, type, productDescription);
 			return product.id;
 		} catch {
 			//* DB Creation Error

@@ -18,8 +18,10 @@ export class Auction {
 	@Property()
 	title: string;
 
-	@OneToOne()
-	product!: Product;
+	@OneToOne(() => Product, product => product.auction, {
+		owner: true,
+	})
+  	product!: Product;
 
 	@OneToMany(
 		() => Scheme,

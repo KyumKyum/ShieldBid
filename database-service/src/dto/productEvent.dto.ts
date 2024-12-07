@@ -3,4 +3,5 @@ export type CreateProductEvent = {
 	productName: string;
 	productType: string;
 	ownerId: string;
+	productDescription: string;
 };

@@ -18,6 +18,7 @@ export class RabbitMQService {
 		private readonly amqp: AmqpConnection,
 		private readonly auctionService: SubscriberAuctionService,
 		private readonly cacheService: CacheService,
+		private readonly subscriberAuctionService: SubscriberAuctionService,
 		private readonly subscriberProductService: SubscriberProductService,
 		private readonly subscriberUserService: SubscriberUserService
 	) {}
@@ -55,17 +56,22 @@ export class RabbitMQService {
 				await this.createProduct(event);
 				break;
 			}
+			case DatabaseRoute.GET_ALL_AUCTIONS: {
+				const auctions = await this.subscriberAuctionService.queryAllAuctions();
+				await this.cacheService.set(payload, JSON.stringify(auctions))
+			}
 		}
 	}
 
 	private async createProduct(event: CreateProductEvent) {
-		const { cacheKey, ownerId, productName, productType }: CreateProductEvent =
+		const { cacheKey, ownerId, productName, productType, productDescription }: CreateProductEvent =
 			event;
 
 		const productId = await this.subscriberProductService.createNewProduct(
 			ownerId,
 			productName,
 			productType,
+			productDescription
 		);
 
 		if (productId) {

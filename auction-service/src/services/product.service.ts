@@ -13,12 +13,14 @@ export class ProductService {
 		productName: string,
 		productType: string,
 		ownerId: string,
+		productDescription: string
 	) {
 		const createProductEvent = {
 			cacheKey,
 			productName,
 			productType,
 			ownerId,
+			productDescription: productDescription?.length <=0 ? "" : productDescription
 		};
 
 		const msg: CommonMsg = {

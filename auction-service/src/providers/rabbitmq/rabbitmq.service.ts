@@ -8,7 +8,6 @@ import { CreateProductResponse } from "src/dto/product.dto";
 import { CacheAuction } from "src/dto/auction.dto";
 import { ProcessingRoute } from "src/constants/processingRoute.constants";
 import { DatabaseRoute } from "src/constants/databaseRoute.constants copy";
-import { channel } from "diagnostics_channel";
 
 @Injectable()
 export class RabbitMQService {
@@ -61,7 +60,6 @@ export class RabbitMQService {
                     route: ProcessingRoute.DEPLOY_AUCTION_REQUEST,
                     payload
                 }
-                console.log(msg)
 
                 await this.amqp.publish(
                     process.env.RMQ_EXCHANGE_PROCESSING,

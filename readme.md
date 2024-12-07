@@ -81,5 +81,9 @@ export type RequestBidDto = {
 	auctionId: string;
 	price: number;
 };
+```
 
+- `POST /auction/list`: Query all auctions existing
+```typescript
+// GET /auction/list
 ```

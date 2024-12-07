@@ -7,7 +7,7 @@ import { DatabaseException } from "src/exceptions/DatabaseException.dto";
 export class ProductRepository {
 	constructor(private readonly _em: EntityManager) {}
 
-	async create(ownerId: string, name: string, type: string): Promise<Product> {
+	async create(ownerId: string, name: string, type: string, description: string): Promise<Product> {
 		try {
 			const em = this._em.fork();
 
@@ -17,6 +17,7 @@ export class ProductRepository {
 				owner: ownerRef,
 				name,
 				type,
+				description
 			});
 
 			await em.persistAndFlush(newProduct);
