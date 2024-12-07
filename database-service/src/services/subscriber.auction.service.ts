@@ -67,6 +67,14 @@ export class SubscriberAuctionService {
 		}
 	}
 
+	async queryAuction(auctionId: string): Promise<Auction | null> {
+		try{
+			return await this.auctionRepository.find(auctionId)
+		}catch {
+			return null;
+		}
+	}
+
 	async terminateAuction(auctionId: string): Promise<boolean> {
 		try {
 			await this.auctionRepository.update(auctionId, { status: "TERMINATED" });

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post, Put } from "@nestjs/common";
+import { Body, Controller, Get, Inject, Param, Post, Put } from "@nestjs/common";
 import {
 	AuctionDto,
 	CacheAuction,
@@ -46,9 +46,16 @@ export class RootController {
 	}
 
 	// * List auction
-	@Get("/list")
+	@Get("/lists")
 	async getAuctionList(): Promise<AuctionDto[]> {
 		return await this.auctionService.queryAuctionList();
+		
+	}
+
+	@Get("/list:id")
+	async getAuction(@Param("id") id: string): Promise<AuctionDto> {
+		const auctionId = id.substring(1)
+		return await this.auctionService.queryAuction(auctionId);
 		
 	}
 

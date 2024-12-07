@@ -60,6 +60,11 @@ export class RabbitMQService {
 				const auctions = await this.subscriberAuctionService.queryAllAuctions();
 				await this.cacheService.set(payload, JSON.stringify(auctions))
 			}
+			case DatabaseRoute.GET_SINGLE_AUCTION: {
+				const {cid, auctionId} = payload;
+				const auction = await this.subscriberAuctionService.queryAuction(auctionId);
+				await this.cacheService.set(cid, JSON.stringify(auction));
+			}
 		}
 	}
 

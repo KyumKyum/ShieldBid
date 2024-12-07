@@ -49,6 +49,45 @@ export class AuctionService {
 		}
 	}
 
+	async queryAuction(auctionId: string): Promise<AuctionDto> {
+		try{
+			const cid = `cid_${this.correlationService.generateId()}`;
+
+			const payload = {
+				cid,
+				auctionId
+			}
+			const msg: CommonMsg = {
+				route: DatabaseRoute.GET_SINGLE_AUCTION,
+				payload
+			}
+
+			await this.amqp.publish(
+				process.env.RMQ_EXCHANGE_DB,
+				RoutingKey.DATABASE,
+				JSON.stringify(msg),
+			)
+
+			const res = await this.correlationService.waitAndRetrieve(cid);
+			return JSON.parse(res) as AuctionDto
+
+
+		}catch(e) {
+
+			if(e instanceof TiredOfWaitingError){
+				throw new HttpException(
+					"Timeout! (5 sec)",
+					HttpStatus.REQUEST_TIMEOUT
+				)
+			}
+
+			throw new HttpException(
+				"Event Propagetion Failed: Query AuctionList",
+				HttpStatus.INTERNAL_SERVER_ERROR
+			)
+		}
+	}
+
 	async requestAuctionTermination(auctionId: string) {
 		
 		const msg: CommonMsg = {
