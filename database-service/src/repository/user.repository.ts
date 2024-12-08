@@ -31,4 +31,13 @@ export class UserRepository {
 		const user = await em.findOne(User, { address: addr });
 		return user;
 	}
+
+	async updateConsignor(userId: string) {
+		const em = this._em.fork();
+		const user = await em.findOne(User, {id: userId});
+		user.isConsignor = true;
+		user.updatedAt = new Date()
+
+		await em.persistAndFlush(user);
+	}
 }

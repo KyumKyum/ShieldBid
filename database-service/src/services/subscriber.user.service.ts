@@ -28,4 +28,12 @@ export class SubscriberUserService {
 			throw new DatabaseException("ERROR: Get User Address");
 		}
 	}
+
+	async updateUserAsConsignor(userId: string) {
+		try {
+			await this.userRepository.updateConsignor(userId)
+		} catch (e) {
+			throw new DatabaseException("ERROR: Update User As Consignor");
+		}
+	}
 }

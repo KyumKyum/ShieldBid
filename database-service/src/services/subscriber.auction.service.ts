@@ -36,6 +36,7 @@ export class SubscriberAuctionService {
 		}
 
 		try {
+			await this.userService.updateUserAsConsignor(ownerId)
 			consignorAddress = await this.userService.getUserAddress(ownerId);
 		} catch {
 			//* TODO
